@@ -28,30 +28,31 @@ export default function FreeStyleChatbotBuilder({ mode, goBack }) {
             buttonFontFamily: "Poppins",
             buttonSize: 15,
           },
-        
-     {
-  id: Date.now() + 1,
-  type: "text",
-  content: "Welcome to Smart Assistant! I’m here to help you get answers, automate tasks, and make your day a little easier. How can I assist you today?",
-  x: 50,
-  y: 180, // moved slightly down
-  width: 400,
-  height: 100,
-  fontSize: 22,
-  fontFamily: "Poppins",
-  color: "#2c3e50",
-  background: "transparent",
-  bold: false,
-  italic: false,
-  underline: false,
-}
-
+          {
+            id: Date.now() + 1,
+            type: "text",
+            content:
+              "Welcome to Smart Assistant! I’m here to help you get answers, automate tasks, and make your day a little easier. How can I assist you today?",
+            x: 50,
+            y: 200,
+            width: 500,
+            height: 120,
+            fontSize: 18,
+            fontFamily: "Poppins",
+            color: "#2c3e50",
+            background: "transparent",
+            bold: false,
+            italic: false,
+            underline: false,
+          },
         ]
       : []
   );
 
   const [selectedId, setSelectedId] = useState(null);
   const [previewMode, setPreviewMode] = useState(false);
+  const [previewStep, setPreviewStep] = useState(1); // 1: Preview, 2: Secret Code
+  const [secretCode, setSecretCode] = useState(""); // secret code input
 
   const styles = {
     container: {
@@ -64,7 +65,7 @@ export default function FreeStyleChatbotBuilder({ mode, goBack }) {
     },
     toolbar: {
       position: "fixed",
-      top: 60, // moved down to avoid Back button overlap
+      top: 60,
       left: 10,
       background: "rgba(255,255,255,0.9)",
       borderRadius: "10px",
@@ -166,30 +167,36 @@ export default function FreeStyleChatbotBuilder({ mode, goBack }) {
 
   const selected = elements.find((el) => el.id === selectedId);
 
+  const handlePublish = () => {
+    if (!secretCode) {
+      alert("Please enter a secret code before publishing!");
+      return;
+    }
+    alert("Bot is ready! (No live saving implemented yet.)");
+  };
+
   return (
     <div style={styles.container}>
       {/* Back Button */}
-      {/* Back button */}
-{!previewMode && (
-  <button
-    style={{
-      position: "fixed",
-      top: 10,
-      left: 10,
-      background: "#e61616ff",
-      color: "#f3ebebff",
-      border: "none",
-      borderRadius: "8px",
-      padding: "8px 12px",
-      cursor: "pointer",
-      zIndex: 1000,
-    }}
-    onClick={goBack} // or your back handler
-  >
-     Back
-  </button>
-)}
-
+      {!previewMode && (
+        <button
+          style={{
+            position: "fixed",
+            top: 10,
+            left: 10,
+            background: "#e61616ff",
+            color: "#f3ebebff",
+            border: "none",
+            borderRadius: "8px",
+            padding: "8px 12px",
+            cursor: "pointer",
+            zIndex: 1000,
+          }}
+          onClick={goBack}
+        >
+          Back
+        </button>
+      )}
 
       {/* Toolbar */}
       {!previewMode && (
@@ -212,29 +219,16 @@ export default function FreeStyleChatbotBuilder({ mode, goBack }) {
       {/* Property Panel */}
       {selected && !previewMode && (
         <div style={styles.propertyPanel}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <h4 style={{ margin: 0 }}>⚙️ Properties</h4>
             <button
-              style={{
-                background: "transparent",
-                border: "none",
-                color: "red",
-                fontWeight: "bold",
-                cursor: "pointer",
-              }}
+              style={{ background: "transparent", border: "none", color: "red", fontWeight: "bold", cursor: "pointer" }}
               onClick={() => setSelectedId(null)}
             >
               ❌
             </button>
           </div>
 
-          {/* Text Properties */}
           {selected.type === "text" && (
             <>
               <label>Text:</label>
@@ -305,7 +299,6 @@ export default function FreeStyleChatbotBuilder({ mode, goBack }) {
             </>
           )}
 
-          {/* Chatbot Properties */}
           {selected.type === "chatbot" && (
             <>
               {[
@@ -314,8 +307,8 @@ export default function FreeStyleChatbotBuilder({ mode, goBack }) {
                 ["Body Color", "background", "color"],
                 ["Bot Message Color", "botMessageColor", "color"],
                 ["User Message Color", "userMessageColor", "color"],
-                ["Bot Text Color", "textColor", "color"], // NEW
-                ["User Text Color", "userTextColor", "color"], // NEW
+                ["Bot Text Color", "textColor", "color"],
+                ["User Text Color", "userTextColor", "color"],
                 ["Message Font Size", "messageFontSize", "number"],
                 ["Input Radius", "inputBorderRadius", "number"],
                 ["Placeholder Color", "inputPlaceholderColor", "color"],
@@ -351,7 +344,7 @@ export default function FreeStyleChatbotBuilder({ mode, goBack }) {
         </div>
       )}
 
-      {/* Canvas */}
+      {/* Canvas & Chatbot rendering */}
       {elements.map((el) => (
         <Rnd
           key={el.id}
@@ -367,31 +360,27 @@ export default function FreeStyleChatbotBuilder({ mode, goBack }) {
           enableResizing={!previewMode}
         >
           {el.type === "text" ? (
-     <div
-  style={{
-    width: "100%",
-    height: "100%",
-    background: el.background,
-    color: el.color,
-    fontSize: el.fontSize,
-    fontFamily: el.fontFamily,
-    fontWeight: el.bold ? "bold" : "normal",
-    fontStyle: el.italic ? "italic" : "normal",
-    textDecoration: el.underline ? "underline" : "none",
-    display: "flex",
-    justifyContent: "flex-start",
-    alignItems: "flex-start",
-    padding: "8px",
-    cursor: previewMode ? "default" : "move",
-    border: selectedId === el.id && !previewMode ? "2px solid #0066ff" : "none",
-    borderRadius: "6px",
-    overflowWrap: "break-word",
-  }}
->
-  {el.content}
-</div>
-
-
+            <div
+              style={{
+                width: "100%",
+                height: "100%",
+                background: el.background,
+                color: el.color,
+                fontSize: el.fontSize,
+                fontFamily: el.fontFamily,
+                fontWeight: el.bold ? "bold" : "normal",
+                fontStyle: el.italic ? "italic" : "normal",
+                textDecoration: el.underline ? "underline" : "none",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                cursor: previewMode ? "default" : "move",
+                border: selectedId === el.id && !previewMode ? "2px solid #0066ff" : "none",
+                borderRadius: "6px",
+              }}
+            >
+              {el.content}
+            </div>
           ) : (
             <div
               style={{
@@ -401,10 +390,7 @@ export default function FreeStyleChatbotBuilder({ mode, goBack }) {
                 overflow: "hidden",
                 background: el.background,
                 boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
-                border:
-                  selectedId === el.id && !previewMode
-                    ? "2px solid #0066ff"
-                    : "none",
+                border: selectedId === el.id && !previewMode ? "2px solid #0066ff" : "none",
                 display: "flex",
                 flexDirection: "column",
               }}
@@ -432,7 +418,7 @@ export default function FreeStyleChatbotBuilder({ mode, goBack }) {
                 <p
                   style={{
                     background: el.botMessageColor,
-                    color: el.textColor || "#000", // bot text color
+                    color: el.textColor || "#000",
                     padding: "6px",
                     borderRadius: "8px",
                     display: "inline-block",
@@ -444,7 +430,7 @@ export default function FreeStyleChatbotBuilder({ mode, goBack }) {
                 <p
                   style={{
                     background: el.userMessageColor,
-                    color: el.userTextColor || "#000", // user text color
+                    color: el.userTextColor || "#000",
                     padding: "6px",
                     borderRadius: "8px",
                     display: "inline-block",
@@ -493,25 +479,105 @@ export default function FreeStyleChatbotBuilder({ mode, goBack }) {
         </Rnd>
       ))}
 
-      {/* Preview Mode */}
-      {previewMode && (
-        <button
+      {/* Preview Step 1 */}
+      {previewMode && previewStep === 1 && (
+        <>
+          <button
+            style={{
+              position: "fixed",
+              top: 10,
+              right: 10,
+              background: "#0066ff",
+              color: "#fff",
+              border: "none",
+              borderRadius: "8px",
+              padding: "8px 12px",
+              cursor: "pointer",
+              zIndex: 1000,
+            }}
+            onClick={() => setPreviewMode(false)}
+          >
+            ✏️ Edit Again
+          </button>
+          <button
+            style={{
+              position: "fixed",
+              top: 60,
+              right: 10,
+              background: "#28a745",
+              color: "#fff",
+              border: "none",
+              borderRadius: "8px",
+              padding: "8px 12px",
+              cursor: "pointer",
+              zIndex: 1000,
+            }}
+            onClick={() => setPreviewStep(2)}
+          >
+            ➡️ Next
+          </button>
+        </>
+      )}
+
+      {/* Preview Step 2: Secret Code */}
+      {previewMode && previewStep === 2 && (
+        <div
           style={{
             position: "fixed",
-            top: 10,
-            right: 10,
-            background: "#0066ff",
-            color: "#fff",
-            border: "none",
-            borderRadius: "8px",
-            padding: "8px 12px",
-            cursor: "pointer",
-            zIndex: 1000,
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            background: "rgba(0,0,0,0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 2000,
           }}
-          onClick={() => setPreviewMode(false)}
         >
-          ✏️ Edit Again
-        </button>
+          <div
+            style={{
+              background: "#fff",
+              padding: "30px",
+              borderRadius: "12px",
+              width: "400px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "15px",
+            }}
+          >
+            <h2>Publish Bot</h2>
+            <label>Bot Name:</label>
+            <input
+              type="text"
+              style={{ padding: "8px", borderRadius: "6px", border: "1px solid #ccc",cursor:"not-allowed" }}
+              value={elements.find((el) => el.type === "chatbot")?.botName || ""}
+              readOnly
+              disabled
+            
+            />
+            <label>Secret Code:</label>
+            <input
+              type="password"
+              style={{ padding: "8px", borderRadius: "6px", border: "1px solid #ccc" }}
+              placeholder="Enter secret code"
+              value={secretCode}
+              onChange={(e) => setSecretCode(e.target.value)}
+            />
+            <button
+              style={{ background: "#28a745", color: "#fff", padding: "10px", borderRadius: "6px" }}
+              onClick={handlePublish}
+            >
+              Save & Publish
+            </button>
+            <button
+              style={{ background: "#ccc", color: "#000", padding: "10px", borderRadius: "6px" }}
+              onClick={() => setPreviewStep(1)}
+            >
+              Back
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
