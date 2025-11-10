@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Rnd } from "react-rnd";
 
-export default function FreeStyleChatbotBuilder({ mode, goBack }) {
+export default function FreeStyleChatbotBuilder({ mode, goBack , botName , }) {
   const [elements, setElements] = useState(
     mode === "predefined"
       ? [
