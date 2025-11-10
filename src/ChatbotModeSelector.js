@@ -19,7 +19,7 @@ export default function ChatbotModeSelector() {
       return;
     }
     setError("");
-    setMode("ai"); // pass to FreeStyleChatbotBuilder in AI mode
+ setMode("predefined")
   };
 
   if (mode) {
