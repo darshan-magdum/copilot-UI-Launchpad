@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Rnd } from "react-rnd";
 
-export default function FreeStyleChatbotBuilder({ mode, goBack, botName }) {
+export default function FreeStyleChatbotBuilder({ mode, goBack, botName ,botDescription }) {
   const [elements, setElements] = useState(
     mode === "predefined"
       ? [
@@ -70,7 +70,7 @@ export default function FreeStyleChatbotBuilder({ mode, goBack, botName }) {
             buttonColor: "#fff",
             buttonFontFamily: "Poppins",
             buttonSize: 15,
-            aiModel: "gpt-3.5",
+          
           },
           {
             id: Date.now() + 1,
@@ -197,7 +197,6 @@ export default function FreeStyleChatbotBuilder({ mode, goBack, botName }) {
         buttonColor: "#fff",
         buttonFontFamily: "Arial",
         buttonSize: 14,
-        aiModel: mode === "ai" ? "gpt-3.5" : undefined,
       },
     ]);
   };
@@ -415,20 +414,7 @@ export default function FreeStyleChatbotBuilder({ mode, goBack, botName }) {
                 </div>
               ))}
 
-              {/* AI-specific property */}
-              {mode === "ai" && (
-                <div>
-                  <label>AI Model:</label>
-                  <select
-                    style={styles.input}
-                    value={selected.aiModel || "gpt-3.5"}
-                    onChange={(e) => updateElement(selected.id, { aiModel: e.target.value })}
-                  >
-                    <option value="gpt-3.5">GPT-3.5</option>
-                    <option value="gpt-4">GPT-4</option>
-                  </select>
-                </div>
-              )}
+            
 
               <button
                 style={{ ...styles.btn, background: "#e74c3c" }}
