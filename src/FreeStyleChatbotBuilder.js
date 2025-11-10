@@ -53,10 +53,13 @@ export default function FreeStyleChatbotBuilder({ mode, goBack, botName ,botDesc
       : [] // AI mode will be dynamically loaded
   );
 
+  const [loading, setLoading] = useState(false);
+
   // -----------------------------
   // Function to fetch AI theme
   // -----------------------------
  const fetchAITheme = async () => {
+  setLoading(true);
   try {
     const prompt = `
 Generate a JSON theme, a tagline for bot name, and initial text for a chatbot based on:
@@ -66,7 +69,7 @@ Bot Description: ${botDescription}
 JSON must include:
 headerColor, background, textColor, botMessageColor, userMessageColor, 
 messageFontSize, inputBorderRadius, inputPlaceholderColor, 
-buttonText, buttonBg, buttonColor, buttonFontFamily,
+ buttonBg, buttonColor, buttonFontFamily,
 fullBackground,
 title,        // <-- AI should generate a short, catchy title
 titleBg,      // <-- optional background highlight for title
@@ -110,7 +113,7 @@ Make the title attractive, bold, and relevant to the bot's theme. Return only va
         messageFontSize: theme.messageFontSize,
         inputBorderRadius: theme.inputBorderRadius,
         inputPlaceholderColor: theme.inputPlaceholderColor,
-        buttonText: theme.buttonText,
+        
         buttonBg: theme.buttonBg,
         buttonColor: theme.buttonColor,
         buttonFontFamily: theme.buttonFontFamily,
@@ -153,6 +156,8 @@ Make the title attractive, bold, and relevant to the bot's theme. Return only va
     ]);
   } catch (error) {
     console.error("Failed to fetch AI theme:", error);
+  } finally {
+    setLoading(false); // stop loading
   }
 };
 
@@ -268,7 +273,7 @@ Make the title attractive, bold, and relevant to the bot's theme. Return only va
         inputBorderRadius: mode === "ai" ? 12 : 6,
         inputPlaceholderColor: "#888",
         inputPlaceholderSize: 14,
-        buttonText: mode === "ai" ? "Ask AI" : "Send",
+        buttonText:"Send",
         buttonBg: mode === "ai" ? "#8e44ad" : "#0066ff",
         buttonColor: "#fff",
         buttonFontFamily: "Arial",
@@ -298,6 +303,30 @@ Make the title attractive, bold, and relevant to the bot's theme. Return only va
 
   return (
     <div style={styles.container}>
+
+         {loading && (
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+          background: "rgba(255,255,255,0.8)",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          zIndex: 5000,
+          fontSize: "20px",
+          fontWeight: "bold",
+          color: "#333",
+          flexDirection: "column",
+        }}
+      >
+        <div className="spinner" style={{ marginBottom: "10px" }}>⏳</div>
+        Loading AI Theme...
+      </div>
+    )}
       {/* Back Button */}
       {!previewMode && (
         <button
@@ -630,7 +659,7 @@ Make the title attractive, bold, and relevant to the bot's theme. Return only va
                     fontSize: el.buttonSize,
                   }}
                 >
-                  {el.buttonText}
+                  send
                 </button>
               </div>
             </div>
