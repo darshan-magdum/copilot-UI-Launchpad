@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Rnd } from "react-rnd";
 import axios from "axios";
+import "./freestyle.css"
 
 export default function FreeStyleChatbotBuilder({ mode, goBack, botName ,botDescription }) {
-
-
   
     const [elements, setElements] = useState(
     mode === "predefined"
@@ -189,46 +188,6 @@ Make the title attractive, bold, and relevant to the bot's theme. Return only va
       overflow: "hidden",
       fontFamily: "Arial, sans-serif",
     },
-    toolbar: {
-      position: "fixed",
-      top: 60,
-      left: 10,
-      background: "rgba(255,255,255,0.9)",
-      borderRadius: "10px",
-      boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
-      padding: "10px",
-      display: "flex",
-      gap: "10px",
-      zIndex: 999,
-    },
-    btn: {
-      background: "#0066ff",
-      color: "white",
-      border: "none",
-      borderRadius: "6px",
-      padding: "8px 10px",
-      cursor: "pointer",
-    },
-    propertyPanel: {
-      position: "fixed",
-      top: 10,
-      right: 10,
-      background: "rgba(255,255,255,0.97)",
-      borderRadius: "10px",
-      boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
-      padding: "10px",
-      width: "250px",
-      zIndex: 999,
-      maxHeight: "90vh",
-      overflowY: "auto",
-    },
-    input: {
-      width: "100%",
-      padding: "5px",
-      margin: "5px 0",
-      borderRadius: "5px",
-      border: "1px solid #ccc",
-    },
   };
 
   const addText = () => {
@@ -386,15 +345,16 @@ Make the title attractive, bold, and relevant to the bot's theme. Return only va
 
       {/* Toolbar */}
       {!previewMode && (
-        <div style={styles.toolbar}>
-          <button style={styles.btn} onClick={addText}>
+        <div className="toolbar">
+          <button className="btn" onClick={addText}>
             ➕ Add Text
           </button>
-          <button style={styles.btn} onClick={addChatbot}>
+          <button className="btn" onClick={addChatbot}>
             🤖 Add Chatbot
           </button>
           <button
-            style={{ ...styles.btn, background: "#28a745" }}
+          className="btn"
+            style={{  background: "#28a745" }}
             onClick={() => setPreviewMode(true)}
           >
             💾 Save & Preview
@@ -404,7 +364,7 @@ Make the title attractive, bold, and relevant to the bot's theme. Return only va
 
       {/* Property Panel */}
       {selected && !previewMode && (
-        <div style={styles.propertyPanel}>
+        <div className="propertyPanel">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <h4 style={{ margin: 0 }}>⚙️ Properties</h4>
             <button
@@ -419,20 +379,21 @@ Make the title attractive, bold, and relevant to the bot's theme. Return only va
             <>
               <label>Text:</label>
               <input
-                style={styles.input}
+                
+                className="input"
                 value={selected.content}
                 onChange={(e) => updateElement(selected.id, { content: e.target.value })}
               />
               <label>Font Size:</label>
               <input
                 type="number"
-                style={styles.input}
+                 className="input"
                 value={selected.fontSize}
                 onChange={(e) => updateElement(selected.id, { fontSize: parseInt(e.target.value) })}
               />
               <label>Font Family:</label>
               <select
-                style={styles.input}
+                 className="input"
                 value={selected.fontFamily}
                 onChange={(e) => updateElement(selected.id, { fontFamily: e.target.value })}
               >
@@ -445,39 +406,43 @@ Make the title attractive, bold, and relevant to the bot's theme. Return only va
               <label>Text Color:</label>
               <input
                 type="color"
-                style={styles.input}
+                 className="input"
                 value={selected.color}
                 onChange={(e) => updateElement(selected.id, { color: e.target.value })}
               />
               <label>Background:</label>
               <input
                 type="color"
-                style={styles.input}
+                 className="input"
                 value={selected.background}
                 onChange={(e) => updateElement(selected.id, { background: e.target.value })}
               />
               <div style={{ display: "flex", gap: "6px", marginTop: "8px" }}>
                 <button
-                  style={{ ...styles.btn, background: selected.bold ? "#444" : "#888", flex: 1 }}
+                className="btn"
+                  style={{ background: selected.bold ? "#444" : "#888", flex: 1 }}
                   onClick={() => updateElement(selected.id, { bold: !selected.bold })}
                 >
                   <b>B</b>
                 </button>
                 <button
-                  style={{ ...styles.btn, background: selected.italic ? "#444" : "#888", flex: 1 }}
+                className="btn"
+                  style={{  background: selected.italic ? "#444" : "#888", flex: 1 }}
                   onClick={() => updateElement(selected.id, { italic: !selected.italic })}
                 >
                   <i>I</i>
                 </button>
                 <button
-                  style={{ ...styles.btn, background: selected.underline ? "#444" : "#888", flex: 1 }}
+                className="btn"
+                  style={{  background: selected.underline ? "#444" : "#888", flex: 1 }}
                   onClick={() => updateElement(selected.id, { underline: !selected.underline })}
                 >
                   <u>U</u>
                 </button>
               </div>
               <button
-                style={{ ...styles.btn, background: "#e74c3c", marginTop: "10px" }}
+              className="btn"
+                style={{  background: "#e74c3c", marginTop: "10px" }}
                 onClick={() => deleteElement(selected.id)}
               >
                 🗑 Delete
@@ -508,7 +473,7 @@ Make the title attractive, bold, and relevant to the bot's theme. Return only va
                   <label>{label}:</label>
                   <input
                     type={type}
-                    style={styles.input}
+                     className="input"
                     value={selected[key] || ""}
                     onChange={(e) =>
                       updateElement(selected.id, {
@@ -522,7 +487,8 @@ Make the title attractive, bold, and relevant to the bot's theme. Return only va
             
 
               <button
-                style={{ ...styles.btn, background: "#e74c3c" }}
+              className="btn"
+                style={{  background: "#e74c3c" }}
                 onClick={() => deleteElement(selected.id)}
               >
                 🗑 Delete Bot
@@ -688,7 +654,7 @@ Make the title attractive, bold, and relevant to the bot's theme. Return only va
 
           {previewStep === 1 && (
             <button
-              style={styles.btn}
+              className="btn"
               onClick={() => setPreviewStep(2)}
             >
               Next
@@ -701,14 +667,14 @@ Make the title attractive, bold, and relevant to the bot's theme. Return only va
                 placeholder="Enter Secret Code"
                 value={secretCode}
                 onChange={(e) => setSecretCode(e.target.value)}
-                style={styles.input}
+                 className="input"
               />
-              <button style={{ ...styles.btn, background: "#28a745" }} onClick={handlePublish}>
+              <button className="btn" style={{ background: "#28a745" }} onClick={handlePublish}>
                 Save & Publish
               </button>
             </>
           )}
-          <button style={{ ...styles.btn, background: "#e61616ff" }} onClick={() => setPreviewMode(false)}>
+          <button className="btn" style={{  background: "#e61616ff" }} onClick={() => setPreviewMode(false)}>
             Back to Edit
           </button>
         </div>
