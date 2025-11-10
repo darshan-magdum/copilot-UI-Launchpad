@@ -6,16 +6,26 @@ export default function ChatbotModeSelector() {
   const [animate, setAnimate] = useState(false);
   const [botName, setBotName] = useState("");
   const [botDescription, setBotDescription] = useState("");
+  const [error, setError] = useState(""); // for AI design validation
 
   useEffect(() => {
     const timer = setTimeout(() => setAnimate(true), 200);
     return () => clearTimeout(timer);
   }, []);
 
+  const handleAISubmit = () => {
+    if (!botName.trim() || !botDescription.trim()) {
+      setError("Please enter both Bot Name and Description!");
+      return;
+    }
+    setError("");
+    setMode("ai"); // pass to FreeStyleChatbotBuilder in AI mode
+  };
+
   if (mode) {
     return (
       <FreeStyleChatbotBuilder
-        mode={mode}
+        mode={mode} // "ai", "custom", "predefined"
         goBack={() => setMode(null)}
         botName={botName}
         botDescription={botDescription}
@@ -49,13 +59,9 @@ export default function ChatbotModeSelector() {
   const subheadingStyle = {
     fontSize: "1.2rem",
     color: "#333",
-    marginBottom: "30px",
-    transform: animate ? "translateY(0)" : "translateY(-30px)",
-    opacity: animate ? 1 : 0,
-    transition: "all 1s ease",
+    marginBottom: "30px"
   };
 
-  // Horizontal, compact input container
   const inputContainerStyle = {
     display: "flex",
     gap: "10px",
@@ -80,6 +86,23 @@ export default function ChatbotModeSelector() {
   const inputFocusStyle = {
     border: "1px solid #0066ff",
     boxShadow: "0 0 4px rgba(0,102,255,0.4)",
+  };
+
+  const submitButtonStyle = {
+    padding: "6px 12px",
+    borderRadius: "6px",
+    border: "none",
+    background: "#0066ff",
+    color: "#fff",
+    cursor: "pointer",
+    fontSize: "0.85rem",
+    transition: "0.3s",
+  };
+
+  const errorStyle = {
+    color: "red",
+    marginTop: "6px",
+    fontSize: "0.85rem",
   };
 
   const cardContainer = {
@@ -141,14 +164,13 @@ export default function ChatbotModeSelector() {
       ))}
 
       <h1 style={headingStyle}>🤖 Welcome to Copilot UI Launchpad</h1>
-    
 
       {/* AI Bot Details Heading */}
       <p style={{ marginBottom: "10px", fontSize: "1rem", color: "#333" }}>
-        ✨ Give your bot details — AI can help design it for you!
+        ✨ Design your bot with AI — enter details below!
       </p>
 
-      {/* Horizontal Compact Inputs */}
+      {/* Horizontal Compact Inputs + Submit */}
       <div style={inputContainerStyle}>
         <input
           type="text"
@@ -172,12 +194,15 @@ export default function ChatbotModeSelector() {
             Object.assign(e.target.style, { border: "1px solid #ccc", boxShadow: "none" })
           }
         />
+        <button style={submitButtonStyle} onClick={handleAISubmit}>
+          Submit
+        </button>
       </div>
+      {error && <div style={errorStyle}>{error}</div>}
 
-  <p style={subheadingStyle}>
-        Build your intelligent assistant easily! Choose a mode to get started.
-      </p>
-      {/* Cards */}
+      <p style={subheadingStyle}>Or choose a mode to get started quickly:</p>
+
+      {/* Cards for Custom and Predefined modes */}
       <div style={cardContainer}>
         <div
           style={cardStyle}
@@ -217,7 +242,7 @@ export default function ChatbotModeSelector() {
       </div>
 
       <p style={tipStyle}>
-        💡 Tip: Use predefined templates for a quick setup or customize your own for complete control.
+        💡 Tip: Use AI design for smart bot creation, or select a mode for quick setup.
       </p>
 
       <style>{`
