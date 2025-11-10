@@ -37,7 +37,7 @@ export default function FreeStyleChatbotBuilder({ mode, goBack }) {
   y: 180, // moved slightly down
   width: 400,
   height: 100,
-  fontSize: 18,
+  fontSize: 22,
   fontFamily: "Poppins",
   color: "#2c3e50",
   background: "transparent",
