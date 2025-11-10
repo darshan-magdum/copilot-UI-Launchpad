@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Rnd } from "react-rnd";
 
-export default function FreeStyleChatbotBuilder({ mode, goBack , botName , }) {
+export default function FreeStyleChatbotBuilder({ mode, goBack, botName }) {
   const [elements, setElements] = useState(
     mode === "predefined"
       ? [
@@ -46,10 +46,54 @@ export default function FreeStyleChatbotBuilder({ mode, goBack , botName , }) {
             underline: false,
           },
         ]
+      : mode === "ai"
+      ? [
+          {
+            id: Date.now(),
+            type: "chatbot",
+            x: 800,
+            y: 90,
+            width: 360,
+            height: 480,
+            botName: "AI Assistant",
+            headerColor: "#8e44ad",
+            background: "#ffffff",
+            textColor: "#000",
+            botMessageColor: "#f3e5f5",
+            userMessageColor: "#d1ffd1",
+            messageFontSize: 16,
+            inputBorderRadius: 12,
+            inputPlaceholderColor: "#555",
+            inputPlaceholderSize: 14,
+            buttonText: "Send",
+            buttonBg: "#8e44ad",
+            buttonColor: "#fff",
+            buttonFontFamily: "Poppins",
+            buttonSize: 15,
+            aiModel: "gpt-3.5",
+          },
+          {
+            id: Date.now() + 1,
+            type: "text",
+            content:
+              "Hi! I’m your AI assistant. Ask me anything and I’ll try to help.",
+            x: 50,
+            y: 180,
+            width: 500,
+            height: 120,
+            fontSize: 18,
+            fontFamily: "Poppins",
+            color: "#8e44ad",
+            background: "transparent",
+            bold: true,
+            italic: false,
+            underline: false,
+          },
+        ]
       : []
   );
-const [fullBg, setFullBg] = useState("#f4f6f9"); // default full-screen background
 
+  const [fullBg, setFullBg] = useState("#f4f6f9"); // default full-screen background
   const [selectedId, setSelectedId] = useState(null);
   const [previewMode, setPreviewMode] = useState(false);
   const [previewStep, setPreviewStep] = useState(1); // 1: Preview, 2: Secret Code
@@ -60,7 +104,7 @@ const [fullBg, setFullBg] = useState("#f4f6f9"); // default full-screen backgrou
       height: "100vh",
       width: "100vw",
       position: "relative",
-       background: fullBg, // ← full-screen background
+      background: fullBg,
       overflow: "hidden",
       fontFamily: "Arial, sans-serif",
     },
@@ -138,21 +182,22 @@ const [fullBg, setFullBg] = useState("#f4f6f9"); // default full-screen backgrou
         y: 300,
         width: 320,
         height: 420,
-        botName: "My Chatbot",
-        headerColor: "#0066ff",
+        botName: mode === "ai" ? "AI Assistant" : "My Chatbot",
+        headerColor: mode === "ai" ? "#8e44ad" : "#0066ff",
         background: "#ffffff",
         textColor: "#000000",
-        botMessageColor: "#e8f0ff",
+        botMessageColor: mode === "ai" ? "#f3e5f5" : "#e8f0ff",
         userMessageColor: "#d1ffd1",
-        messageFontSize: 14,
-        inputBorderRadius: 6,
+        messageFontSize: mode === "ai" ? 16 : 14,
+        inputBorderRadius: mode === "ai" ? 12 : 6,
         inputPlaceholderColor: "#888",
         inputPlaceholderSize: 14,
-        buttonText: "Send",
-        buttonBg: "#0066ff",
+        buttonText: mode === "ai" ? "Ask AI" : "Send",
+        buttonBg: mode === "ai" ? "#8e44ad" : "#0066ff",
         buttonColor: "#fff",
         buttonFontFamily: "Arial",
         buttonSize: 14,
+        aiModel: mode === "ai" ? "gpt-3.5" : undefined,
       },
     ]);
   };
@@ -198,43 +243,42 @@ const [fullBg, setFullBg] = useState("#f4f6f9"); // default full-screen backgrou
           Back
         </button>
       )}
-{/* Full-Screen Background Picker */}
 
-{!previewMode && (
-  <div
-    style={{
-      position: "fixed",
-      top: 8,
-      left: 80, // float to left
-      background: "rgba(255,255,255,0.95)",
-      padding: "8px 10px",
-      borderRadius: "12px",
-      boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
-      display: "flex",
-      alignItems: "center",
-      gap: "10px",
-      zIndex: 1000,
-      fontFamily: "Arial, sans-serif",
-    }}
-  >
-    <label style={{ fontWeight: "bold" }}>Background:</label>
-    <input
-      type="color"
-      value={fullBg}
-      onChange={(e) => setFullBg(e.target.value)}
-      style={{
-        width: "130px",
-        height: "30px",
-        border: "none",
-        cursor: "pointer",
-        padding: 0,
-        background: "transparent",
-      }}
-    />
-    <span style={{ fontSize: "14px" }}>{fullBg}</span>
-  </div>
-)}
-
+      {/* Full-Screen Background Picker */}
+      {!previewMode && (
+        <div
+          style={{
+            position: "fixed",
+            top: 8,
+            left: 80,
+            background: "rgba(255,255,255,0.95)",
+            padding: "8px 10px",
+            borderRadius: "12px",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            zIndex: 1000,
+            fontFamily: "Arial, sans-serif",
+          }}
+        >
+          <label style={{ fontWeight: "bold" }}>Background:</label>
+          <input
+            type="color"
+            value={fullBg}
+            onChange={(e) => setFullBg(e.target.value)}
+            style={{
+              width: "130px",
+              height: "30px",
+              border: "none",
+              cursor: "pointer",
+              padding: 0,
+              background: "transparent",
+            }}
+          />
+          <span style={{ fontSize: "14px" }}>{fullBg}</span>
+        </div>
+      )}
 
       {/* Toolbar */}
       {!previewMode && (
@@ -339,8 +383,7 @@ const [fullBg, setFullBg] = useState("#f4f6f9"); // default full-screen backgrou
 
           {selected.type === "chatbot" && (
             <>
-              {[
-                ["Bot Name", "botName", "text"],
+              {[["Bot Name", "botName", "text"],
                 ["Header Color", "headerColor", "color"],
                 ["Body Color", "background", "color"],
                 ["Bot Message Color", "botMessageColor", "color"],
@@ -355,7 +398,7 @@ const [fullBg, setFullBg] = useState("#f4f6f9"); // default full-screen backgrou
                 ["Button Bg", "buttonBg", "color"],
                 ["Button Text Color", "buttonColor", "color"],
                 ["Button Font", "buttonFontFamily", "text"],
-                ["Button Font Size", "buttonSize", "number"],
+                ["Button Font Size", "buttonSize", "number"]
               ].map(([label, key, type]) => (
                 <div key={key}>
                   <label>{label}:</label>
@@ -371,6 +414,22 @@ const [fullBg, setFullBg] = useState("#f4f6f9"); // default full-screen backgrou
                   />
                 </div>
               ))}
+
+              {/* AI-specific property */}
+              {mode === "ai" && (
+                <div>
+                  <label>AI Model:</label>
+                  <select
+                    style={styles.input}
+                    value={selected.aiModel || "gpt-3.5"}
+                    onChange={(e) => updateElement(selected.id, { aiModel: e.target.value })}
+                  >
+                    <option value="gpt-3.5">GPT-3.5</option>
+                    <option value="gpt-4">GPT-4</option>
+                  </select>
+                </div>
+              )}
+
               <button
                 style={{ ...styles.btn, background: "#e74c3c" }}
                 onClick={() => deleteElement(selected.id)}
@@ -474,28 +533,28 @@ const [fullBg, setFullBg] = useState("#f4f6f9"); // default full-screen backgrou
                     display: "inline-block",
                   }}
                 >
-                  <strong>You:</strong> Tell me about your business.
+                  <strong>User:</strong> Hi!
                 </p>
               </div>
               <div
                 style={{
-                  padding: "10px",
-                  borderTop: "1px solid #ddd",
+                  padding: "6px",
+                  borderTop: "1px solid #ccc",
                   display: "flex",
-                  gap: "8px",
+                  gap: "4px",
                 }}
               >
                 <input
-                  type="text"
-                  placeholder="Type here..."
+                  placeholder="Type a message..."
                   style={{
-                    width: "100%",
-                    padding: "5px",
+                    flex: 1,
                     borderRadius: el.inputBorderRadius,
                     border: "1px solid #ccc",
+                    padding: "6px",
                     fontSize: el.inputPlaceholderSize,
                     color: el.inputPlaceholderColor,
                   }}
+                  disabled={previewMode}
                 />
                 <button
                   style={{
@@ -504,9 +563,9 @@ const [fullBg, setFullBg] = useState("#f4f6f9"); // default full-screen backgrou
                     border: "none",
                     borderRadius: "6px",
                     padding: "6px 10px",
-                    fontSize: el.buttonSize,
-                    fontFamily: el.buttonFontFamily,
                     cursor: "pointer",
+                    fontFamily: el.buttonFontFamily,
+                    fontSize: el.buttonSize,
                   }}
                 >
                   {el.buttonText}
@@ -517,104 +576,50 @@ const [fullBg, setFullBg] = useState("#f4f6f9"); // default full-screen backgrou
         </Rnd>
       ))}
 
-      {/* Preview Step 1 */}
-      {previewMode && previewStep === 1 && (
-        <>
-          <button
-            style={{
-              position: "fixed",
-              top: 10,
-              right: 10,
-              background: "#0066ff",
-              color: "#fff",
-              border: "none",
-              borderRadius: "8px",
-              padding: "8px 12px",
-              cursor: "pointer",
-              zIndex: 1000,
-            }}
-            onClick={() => setPreviewMode(false)}
-          >
-            ✏️ Edit Again
-          </button>
-          <button
-            style={{
-              position: "fixed",
-              top: 60,
-              right: 10,
-              background: "#28a745",
-              color: "#fff",
-              border: "none",
-              borderRadius: "8px",
-              padding: "8px 12px",
-              cursor: "pointer",
-              zIndex: 1000,
-            }}
-            onClick={() => setPreviewStep(2)}
-          >
-            ➡️ Next
-          </button>
-        </>
-      )}
-
-      {/* Preview Step 2: Secret Code */}
-      {previewMode && previewStep === 2 && (
+      {/* Preview Mode */}
+      {previewMode && (
         <div
           style={{
             position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            background: "rgba(0,0,0,0.5)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
+            top: 10,
+            left: "50%",
+            transform: "translateX(-50%)",
+            background: "rgba(255,255,255,0.95)",
+            padding: "10px 15px",
+            borderRadius: "12px",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
             zIndex: 2000,
+            display: "flex",
+            gap: "10px",
+            alignItems: "center",
           }}
         >
-          <div
-            style={{
-              background: "#fff",
-              padding: "30px",
-              borderRadius: "12px",
-              width: "400px",
-              display: "flex",
-              flexDirection: "column",
-              gap: "15px",
-            }}
-          >
-            <h2>Publish Bot</h2>
-            <label>Bot Name:</label>
-            <input
-              type="text"
-              style={{ padding: "8px", borderRadius: "6px", border: "1px solid #ccc",cursor:"not-allowed" }}
-              value={elements.find((el) => el.type === "chatbot")?.botName || ""}
-              readOnly
-              disabled
-            
-            />
-            <label>Secret Code:</label>
-            <input
-              type="password"
-              style={{ padding: "8px", borderRadius: "6px", border: "1px solid #ccc" }}
-              placeholder="Enter secret code"
-              value={secretCode}
-              onChange={(e) => setSecretCode(e.target.value)}
-            />
+
+          {previewStep === 1 && (
             <button
-              style={{ background: "#28a745", color: "#fff", padding: "10px", borderRadius: "6px" }}
-              onClick={handlePublish}
+              style={styles.btn}
+              onClick={() => setPreviewStep(2)}
             >
-              Save & Publish
+              Next
             </button>
-            <button
-              style={{ background: "#ccc", color: "#000", padding: "10px", borderRadius: "6px" }}
-              onClick={() => setPreviewStep(1)}
-            >
-              Back
-            </button>
-          </div>
+          )}
+          {previewStep === 2 && (
+            <>
+              <input
+                type="text"
+                placeholder="Enter Secret Code"
+                value={secretCode}
+                onChange={(e) => setSecretCode(e.target.value)}
+                style={styles.input}
+              />
+              <button style={{ ...styles.btn, background: "#28a745" }} onClick={handlePublish}>
+                Save & Publish
+              </button>
+            </>
+          )}
+          <button style={{ ...styles.btn, background: "#e61616ff" }} onClick={() => setPreviewMode(false)}>
+            Back to Edit
+          </button>
         </div>
       )}
     </div>

@@ -19,7 +19,7 @@ export default function ChatbotModeSelector() {
       return;
     }
     setError("");
- setMode("predefined")
+ setMode("ai")
   };
 
   if (mode) {
