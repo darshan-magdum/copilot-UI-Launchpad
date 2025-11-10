@@ -48,6 +48,7 @@ export default function FreeStyleChatbotBuilder({ mode, goBack }) {
         ]
       : []
   );
+const [fullBg, setFullBg] = useState("#f4f6f9"); // default full-screen background
 
   const [selectedId, setSelectedId] = useState(null);
   const [previewMode, setPreviewMode] = useState(false);
@@ -59,7 +60,7 @@ export default function FreeStyleChatbotBuilder({ mode, goBack }) {
       height: "100vh",
       width: "100vw",
       position: "relative",
-      background: "#f4f6f9",
+       background: fullBg, // ← full-screen background
       overflow: "hidden",
       fontFamily: "Arial, sans-serif",
     },
@@ -197,6 +198,43 @@ export default function FreeStyleChatbotBuilder({ mode, goBack }) {
           Back
         </button>
       )}
+{/* Full-Screen Background Picker */}
+
+{!previewMode && (
+  <div
+    style={{
+      position: "fixed",
+      top: 8,
+      left: 80, // float to left
+      background: "rgba(255,255,255,0.95)",
+      padding: "8px 10px",
+      borderRadius: "12px",
+      boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+      display: "flex",
+      alignItems: "center",
+      gap: "10px",
+      zIndex: 1000,
+      fontFamily: "Arial, sans-serif",
+    }}
+  >
+    <label style={{ fontWeight: "bold" }}>Background:</label>
+    <input
+      type="color"
+      value={fullBg}
+      onChange={(e) => setFullBg(e.target.value)}
+      style={{
+        width: "130px",
+        height: "30px",
+        border: "none",
+        cursor: "pointer",
+        padding: 0,
+        background: "transparent",
+      }}
+    />
+    <span style={{ fontSize: "14px" }}>{fullBg}</span>
+  </div>
+)}
+
 
       {/* Toolbar */}
       {!previewMode && (
