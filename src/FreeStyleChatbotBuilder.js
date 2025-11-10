@@ -1,8 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Rnd } from "react-rnd";
+import axios from "axios";
 
 export default function FreeStyleChatbotBuilder({ mode, goBack, botName ,botDescription }) {
-  const [elements, setElements] = useState(
+
+
+  
+    const [elements, setElements] = useState(
     mode === "predefined"
       ? [
           {
@@ -46,52 +50,122 @@ export default function FreeStyleChatbotBuilder({ mode, goBack, botName ,botDesc
             underline: false,
           },
         ]
-      : mode === "ai"
-      ? [
-          {
-            id: Date.now(),
-            type: "chatbot",
-            x: 800,
-            y: 90,
-            width: 360,
-            height: 480,
-            botName: "AI Assistant",
-            headerColor: "#8e44ad",
-            background: "#ffffff",
-            textColor: "#000",
-            botMessageColor: "#f3e5f5",
-            userMessageColor: "#d1ffd1",
-            messageFontSize: 16,
-            inputBorderRadius: 12,
-            inputPlaceholderColor: "#555",
-            inputPlaceholderSize: 14,
-            buttonText: "Send",
-            buttonBg: "#8e44ad",
-            buttonColor: "#fff",
-            buttonFontFamily: "Poppins",
-            buttonSize: 15,
-          
-          },
-          {
-            id: Date.now() + 1,
-            type: "text",
-            content:
-              "Hi! I’m your AI assistant. Ask me anything and I’ll try to help.",
-            x: 50,
-            y: 180,
-            width: 500,
-            height: 120,
-            fontSize: 18,
-            fontFamily: "Poppins",
-            color: "#8e44ad",
-            background: "transparent",
-            bold: true,
-            italic: false,
-            underline: false,
-          },
-        ]
-      : []
+      : [] // AI mode will be dynamically loaded
   );
+
+  // -----------------------------
+  // Function to fetch AI theme
+  // -----------------------------
+ const fetchAITheme = async () => {
+  try {
+    const prompt = `
+Generate a JSON theme, a tagline for bot name, and initial text for a chatbot based on:
+Bot Name: ${botName}
+Bot Description: ${botDescription}
+
+JSON must include:
+headerColor, background, textColor, botMessageColor, userMessageColor, 
+messageFontSize, inputBorderRadius, inputPlaceholderColor, 
+buttonText, buttonBg, buttonColor, buttonFontFamily,
+fullBackground,
+title,        // <-- AI should generate a short, catchy title
+titleBg,      // <-- optional background highlight for title
+initialText   // <-- AI should generate initial greeting or instruction text
+
+Make the title attractive, bold, and relevant to the bot's theme. Return only valid JSON.
+`;
+
+    const response = await axios.post(
+      "https://decesion-engine-openai-b6f0.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2025-01-01-preview",
+      {
+        messages: [{ role: "user", content: prompt }],
+        max_tokens: 400,
+      },
+      {
+        headers: {
+          "api-key": "6221eddfddb045868d62ed42d088befd",
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const aiMessage = response.data.choices[0].message.content;
+    const theme = JSON.parse(aiMessage);
+
+    // Update elements with dynamic theme
+    setElements([
+      {
+        id: Date.now(),
+        type: "chatbot",
+        x: 800,
+        y: 90,
+        width: 360,
+        height: 480,
+        botName: botName || "AI Assistant",
+        headerColor: theme.headerColor,
+        background: theme.background,
+        textColor: theme.textColor,
+        botMessageColor: theme.botMessageColor,
+        userMessageColor: theme.userMessageColor,
+        messageFontSize: theme.messageFontSize,
+        inputBorderRadius: theme.inputBorderRadius,
+        inputPlaceholderColor: theme.inputPlaceholderColor,
+        buttonText: theme.buttonText,
+        buttonBg: theme.buttonBg,
+        buttonColor: theme.buttonColor,
+        buttonFontFamily: theme.buttonFontFamily,
+      },
+      {
+        id: Date.now() + 1,
+        type: "text",
+        content: theme.title || "Welcome!",
+        x: 50,
+        y: 120, // above main text
+        width: 500,
+        height: 60,
+        fontSize: (theme.messageFontSize || 16) + 6,
+        fontFamily: theme.buttonFontFamily || "Poppins",
+        color: theme.headerColor,
+        background: theme.titleBg || "rgba(255,255,255,0.1)",
+        bold: true,
+        italic: false,
+        underline: false,
+        textAlign: "center",
+        borderRadius: 8,
+        padding: 6,
+      },
+      {
+        id: Date.now() + 2,
+        type: "text",
+        content: theme.initialText || "Hello! Ask me anything.",
+        x: 50,
+        y: 180,
+        width: 500,
+        height: 120,
+        fontSize: (theme.messageFontSize || 16) + 2,
+        fontFamily: theme.buttonFontFamily || "Poppins",
+        color: theme.headerColor,
+        background: "transparent",
+        bold: true,
+        italic: false,
+        underline: false,
+      },
+    ]);
+  } catch (error) {
+    console.error("Failed to fetch AI theme:", error);
+  }
+};
+
+
+  
+  // -----------------------------
+  // Load AI theme when mode or bot info changes
+  // -----------------------------
+  useEffect(() => {
+    if (mode === "ai" && botName && botDescription) {
+      fetchAITheme();
+    }
+  }, [mode, botName, botDescription]);
 
   const [fullBg, setFullBg] = useState("#f4f6f9"); // default full-screen background
   const [selectedId, setSelectedId] = useState(null);
@@ -99,6 +173,8 @@ export default function FreeStyleChatbotBuilder({ mode, goBack, botName ,botDesc
   const [previewStep, setPreviewStep] = useState(1); // 1: Preview, 2: Secret Code
   const [secretCode, setSecretCode] = useState(""); // secret code input
 
+
+  
   const styles = {
     container: {
       height: "100vh",
